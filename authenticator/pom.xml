@@ -17,6 +17,7 @@
 
 	<modules>  
 		<module>authenticator-api</module>
+		<module>authenticator-app</module>
 	</modules>
 
 	<properties>
@@ -47,47 +48,15 @@
 			<version>3.0.0</version>
 		</dependency>
 	</dependencies>
-
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>io.swagger</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>2.4.16</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/apis.yaml</inputSpec>
-							<language>spring</language>
-							<configOptions>
-								<sourceFolder>swagger</sourceFolder>
-								<java8>true</java8>
-								<interfaceOnly>true</interfaceOnly>
-								<modelPackage>com.billbalancers.authenticatorapi.model</modelPackage>
-								<apiPackage>com.billbalancers.authenticatorapi.api</apiPackage>
-								<useBeanValidation>true</useBeanValidation>
-							</configOptions>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </plugin>
+    </plugins>
+</build> 
 </project>
