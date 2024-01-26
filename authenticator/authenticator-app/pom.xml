@@ -12,6 +12,11 @@
 
     <dependencies>
         <!-- Add dependencies if necessary -->
+        <dependency>
+            <groupId>com.billbalancers</groupId>
+            <artifactId>authenticator-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
