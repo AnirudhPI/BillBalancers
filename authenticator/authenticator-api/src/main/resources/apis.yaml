@@ -5,37 +5,41 @@ info:
   version: 1.0.0
 
 paths:
-  "/Student/{student_id}":
-    get:
+  "/auth/signup":
+    post:
       tags:
-        - Student Detail
-      summary: "API to get student details by his/her Id"
+        - Auth Detail
+      summary: "API for User to signup"
       produces:
         - application/json
+      consumes:
+        - application/json
+      operationId: getAuth
+      parameters:
+        - in: body
+          name: user
+          description: "The user to create"
+          schema:
+            $ref: "#/definitions/User"
       responses:
-        "200":
+        "201":
           description: "student details"
           schema:
-            $ref: "#/definitions/Student"
+            $ref: "#/definitions/Message"
         "400":
           description: "error detail in case of Bad request"
           schema:
-            $ref: "#/definitions/error"
+            $ref: "#/definitions/Error"
         "500":
           description: "error detail in case of server error"
           schema:
-            $ref: "#/definitions/error"
-      operationId: getStudentDetail
-      parameters:
-        - in: path
-          name: student_id
-          type: string
-          required: true
+            $ref: "#/definitions/Error"
+
       x-auth-type: "Application & Application User"
       x-throttling-tier: unlimited
 
 definitions:
-  error:
+  Error:
     properties:
       error_description:
         description: Error Description
@@ -43,15 +47,23 @@ definitions:
       error:
         description: Error Code
         type: string
-  Student:
+  User:
     properties:
-      id:
-        description: student Id
-        type: integer
-      name:
-        description: student name
+      email:
+        description: email of the user
         type: string
-      age:
-        description: age of Student
-        type: integer
+      password:
+        description: password of user
+        type: string
+      firstName:
+        description: first name of user
+        type: string
+      lastName:
+        description: last name of user
+        type: string
+  Message:
+    properties:
+      message:
+        description: Message Sent
+        type: string
 
