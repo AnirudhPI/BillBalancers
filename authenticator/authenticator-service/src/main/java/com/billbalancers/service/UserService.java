@@ -3,6 +3,7 @@ package com.billbalancers.service;
 import com.billbalancers.model.User;
 import com.billbalancers.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,11 @@ public class UserService {
 
 
     public void insertData(String email,String password,String first_name,String last_name) {
+
+        boolean userExists = userRepository.existsUserByEmail(email);
+        if(userExists){
+            throw new DataIntegrityViolationException("User exists with this email");
+        }
         User entity = new User();
         entity.setEmail(email);
         entity.setFirstName(first_name);

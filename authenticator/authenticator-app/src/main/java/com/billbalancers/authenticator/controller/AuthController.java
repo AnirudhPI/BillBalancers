@@ -24,13 +24,20 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<Message> getAuth(User user){
-        String email = user.getEmail();
-        String password = user.getPassword();
-        String firstName = user.getFirstName();
-        String lastName = user.getLastName();
-        Message message = new Message();
-       message.setMessage(this.authService.signup(email,password,firstName,lastName).getMessage());
-        return ResponseEntity.ok(message);
+        try {
+            String email = user.getEmail();
+            String password = user.getPassword();
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
+            Message message = new Message();
+            message.setMessage(this.authService.signup(email, password, firstName, lastName).getMessage());
+            return ResponseEntity.ok(message);
+        }
+        catch(Exception e){
+            Message m = new Message();
+            m.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(m);
+        }
 
     }
 }
