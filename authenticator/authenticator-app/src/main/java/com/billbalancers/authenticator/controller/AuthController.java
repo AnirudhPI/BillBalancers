@@ -31,7 +31,7 @@ public class AuthController implements AuthApi {
         try {
             Message message = new Message();
             message.setMessage(this.authService.signup(user).getMessage());
-            return ResponseEntity.ok(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
         }
         catch(Exception e){
             Message m = new Message();
