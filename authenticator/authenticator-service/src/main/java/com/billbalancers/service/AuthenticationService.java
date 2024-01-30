@@ -25,7 +25,7 @@ public class AuthenticationService {
     public Message login(UserLogin userLogin) {
 
         this.userService.loginValidation(userLogin);
-        return new Message("Sign In Successful");
+        return new Message("Login Successful");
     }
 
 

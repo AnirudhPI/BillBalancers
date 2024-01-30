@@ -41,16 +41,13 @@ public class UserService {
     public void loginValidation(UserLogin userLogin) {
 
         String email = userLogin.getEmail();
-        // String password = user.getPassword();
-
+        String password = userLogin.getPassword();
         boolean userExists = userRepository.existsUserByEmail(userLogin.getEmail());
         if(!userExists){
             throw new DataIntegrityViolationException("No user found");
         }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = bCryptPasswordEncoder.encode(userLogin.getPassword());
-
-        if(!encodedPassword.equals(userRepository.findPasswordByEmail(email))) {
+        if(!bCryptPasswordEncoder.matches(password,userRepository.findPasswordByEmail(email).getPassword())) {
             throw new RestClientException("Wrong Password");
         }
 
