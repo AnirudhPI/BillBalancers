@@ -25,12 +25,8 @@ public class AuthController implements AuthApi {
     @Override
     public ResponseEntity<Message> getAuth(User user){
         try {
-            String email = user.getEmail();
-            String password = user.getPassword();
-            String firstName = user.getFirstName();
-            String lastName = user.getLastName();
             Message message = new Message();
-            message.setMessage(this.authService.signup(email, password, firstName, lastName).getMessage());
+            message.setMessage(this.authService.signup(user).getMessage());
             return ResponseEntity.ok(message);
         }
         catch(Exception e){

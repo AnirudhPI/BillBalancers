@@ -1,6 +1,8 @@
 package com.billbalancers.service;
 
+
 import com.billbalancers.service.pojos.Message;
+import com.billbalancers.authenticatorapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,9 @@ public class AuthenticationService {
         this.userService = userService;
     }
 
-    public Message signup(String email,String password,String firstName,String lastName){
+    public Message signup(User user){
 
-        this.userService.insertData(email,password,firstName,lastName);
+        this.userService.insertData(user);
         return new Message("Sign In Successful");
     }
 
