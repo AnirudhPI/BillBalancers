@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Container, Typography, TextField, Button } from '@mui/material';
+import axios from 'axios';
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
   });
@@ -16,14 +18,19 @@ const SignupForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
+    // console.log('Form submitted with data:', formData);
+    console.log(formData)
+    const {data} = await axios.post('http://localhost:8080/auth/signup', formData);
+    console.log('response: ', data);
     setFormData({
-      username: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
     });
+
   };
 
   return (
@@ -33,8 +40,9 @@ const SignupForm = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh', 
+        justifyContent: 'flex-start',
+        height: '80vh',
+        marginTop: '5vh',
       }}
     >
       <Typography variant="h4" align="center" gutterBottom>
@@ -50,11 +58,19 @@ const SignupForm = () => {
         }}
       >
         <TextField
-          label="Username"
+          label="First Name"
           fullWidth
           margin="normal"
-          name="username"
-          value={formData.username}
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Last Name"
+          fullWidth
+          margin="normal"
+          name="lastName"
+          value={formData.lastName}
           onChange={handleChange}
         />
         <TextField
