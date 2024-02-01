@@ -19,7 +19,7 @@ public class AuthenticationService {
     public Message signup(User user){
 
         this.userService.insertData(user);
-        return new Message("Sign In Successful");
+        return new Message("Sign Up Successful");
     }
 
     public Message login(UserLogin userLogin) {

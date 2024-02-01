@@ -11,7 +11,7 @@ export default function NavBar() {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    My App
+                    Billbalancers
                 </Typography>
                 <Button color="inherit" component={Link} to="/loginregister">Login/Signup</Button>
                 {/* <Button color="inherit" component={Link} to="/signup">Signup</Button> */}
