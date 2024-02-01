@@ -1,0 +1,112 @@
+swagger: "2.0"
+info:
+  description: Project to perform operation on student records
+  title : studentOperation
+  version: 1.0.0
+
+paths:
+  "/auth/signup":
+    post:
+      tags:
+        - Auth Detail
+      summary: "API for User to signup"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      operationId: getAuth
+      parameters:
+        - in: body
+          name: user
+          description: "The user to create"
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "201":
+          description: "student details"
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "error detail in case of Bad request"
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: "error detail in case of server error"
+          schema:
+            $ref: "#/definitions/Error"
+
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: unlimited
+
+  "/auth/login":
+    post:
+      tags:
+        - Auth Detail
+      summary: "API for User to Login"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      operationId: getAuthLogin
+      parameters:
+        - in: body
+          name: user
+          description: "The user to create"
+          schema:
+            $ref: "#/definitions/UserLogin"
+      responses:
+        "200":
+          description: "student details"
+          schema:
+            $ref: "#/definitions/Message"
+        "401":
+          description: "unauthorized - incorrect credentials"
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: "user not found"
+          schema:
+            $ref: "#/definitions/Error"
+
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: unlimited
+
+definitions:
+  Error:
+    properties:
+      error_description:
+        description: Error Description
+        type: string
+      error:
+        description: Error Code
+        type: string
+  User:
+    properties:
+      email:
+        description: email of the user
+        type: string
+      password:
+        description: password of user
+        type: string
+      firstName:
+        description: first name of user
+        type: string
+      lastName:
+        description: last name of user
+        type: string
+
+  UserLogin:
+    properties:
+      email:
+        description: email of the user
+        type: string
+      password:
+        description: password of user
+        type: string
+
+  Message:
+    properties:
+      message:
+        description: Message Sent
+        type: string
+
