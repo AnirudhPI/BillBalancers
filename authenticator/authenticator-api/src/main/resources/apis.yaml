@@ -54,11 +54,15 @@ paths:
           description: "The user to create"
           schema:
             $ref: "#/definitions/UserLogin"
+        - in: header
+          name : jwtToken
+          description: "JWT Token"
+          type: string
       responses:
         "200":
           description: "student details"
           schema:
-            $ref: "#/definitions/Message"
+            $ref: "#/definitions/MessageWithToken"
         "401":
           description: "unauthorized - incorrect credentials"
           schema:
@@ -109,4 +113,13 @@ definitions:
       message:
         description: Message Sent
         type: string
+  MessageWithToken:
+    properties:
+      message:
+        description: Message Sent
+        type: string
+      token:
+        description: JWT Token
+        type: string
+
 
