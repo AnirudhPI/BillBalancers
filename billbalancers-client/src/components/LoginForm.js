@@ -13,6 +13,7 @@ const LoginForm = () => {
         console.log('Form submitted with data:', formData);
         const {data} = await axios.post('http://localhost:8080/auth/login', formData);
         console.log('data: ', data);
+        localStorage.setItem('token', data.token)
         setFormData({
           email: '',
           password: '',
