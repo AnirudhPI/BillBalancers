@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { Container, Typography, TextField, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Container, Typography, TextField, Button, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
-const EditableLabel = () =>{
+const EditableLabel = ({profile}) =>{
+
     const [editMode, setEditMode] = useState(false);
   
-    const [labelValue, setLabelValue] = useState('Editable Label');
+    const [labelValue, setLabelValue] = useState('');
+
+    useEffect(()=>{
+        setLabelValue(profile);
+    },[profile])
 
     const handleTextChange = (event) => {
         setLabelValue(event.target.value);
@@ -12,6 +18,10 @@ const EditableLabel = () =>{
 
     const toggleEditMode = () => {
         setEditMode(!editMode);
+    };
+
+    const onClick = () => {
+        console.log('hello');
     };
 
     return(
@@ -26,9 +36,17 @@ const EditableLabel = () =>{
                 ) : (
                     <span>{labelValue}</span>
                 )}
-                <Button onClick={toggleEditMode} variant="outlined">
-                    {editMode ? 'Save' : 'Edit'}
+                {
+                    !editMode ? (
+                <IconButton onClick={toggleEditMode} aria-label="edit">
+                    <EditIcon />
+                </IconButton>
+                    ):(
+                <Button onClick={onClick} variant="outlined">
+                    Done
                 </Button>
+                    )
+                }
             </div>
     )
 }

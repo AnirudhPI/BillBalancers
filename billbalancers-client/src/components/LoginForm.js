@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Container, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -11,9 +14,12 @@ const LoginForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log('Form submitted with data:', formData);
-        const {data} = await axios.post('http://localhost:8080/auth/login', formData);
-        console.log('data: ', data);
-        localStorage.setItem('token', data.token)
+        const response = await axios.post('http://localhost:8080/auth/login', formData);
+        console.log('data: ', response);
+        localStorage.setItem('token', response.data.token);
+        if (response.status === 200) {
+			navigate("/profile");
+        }
         setFormData({
           email: '',
           password: '',
