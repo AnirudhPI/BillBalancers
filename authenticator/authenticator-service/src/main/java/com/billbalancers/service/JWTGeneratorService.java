@@ -31,7 +31,7 @@ public class JWTGeneratorService implements JWTGeneratorInterface {
                 .claim("password",userLogin.getPassword())
                 .id(UUID.randomUUID().toString())
                 .issuedAt(Date.from(now.toInstant()))
-                .expiration(Date.from(Instant.now().plus(1L, ChronoUnit.MINUTES)))
+                .expiration(Date.from(Instant.now().plus(10L, ChronoUnit.HOURS)))
                 .signWith(key)
                 .compact();
 
@@ -44,10 +44,7 @@ public class JWTGeneratorService implements JWTGeneratorInterface {
 
             Jws<Claims> claimsJws = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwtString);
 
-            String email = claimsJws.getPayload().get("email", String.class);
-            String password = claimsJws.getPayload().get("password", String.class);
-
-            return "Email: " + email + ",Password:" + password;
+            return claimsJws.getPayload().get("email", String.class);
         }
         catch (ExpiredJwtException e){
             throw new ExpiredJwtException(null,e.getClaims(),"JWT Token Expired",e.getCause());

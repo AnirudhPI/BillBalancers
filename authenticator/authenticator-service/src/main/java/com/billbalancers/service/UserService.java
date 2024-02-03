@@ -52,6 +52,9 @@ public class UserService {
         }
 
     }
-
+    public UserData getUserData(String email){
+        System.out.println(this.userRepository.findUserDataByEmail(email).getFirstName());
+        return this.userRepository.findUserDataByEmail(email);
+    }
 
 }

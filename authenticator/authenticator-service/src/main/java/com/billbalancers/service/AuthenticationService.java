@@ -2,6 +2,7 @@ package com.billbalancers.service;
 
 
 import com.billbalancers.authenticatorapi.model.UserLogin;
+import com.billbalancers.model.UserData;
 import com.billbalancers.service.pojos.Message;
 import com.billbalancers.authenticatorapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,10 @@ public class AuthenticationService {
 
         this.userService.loginValidation(userLogin);
         return new Message("Login Successful");
+    }
+
+    public UserData getUserData(String email){
+        return this.userService.getUserData(email);
     }
 
 

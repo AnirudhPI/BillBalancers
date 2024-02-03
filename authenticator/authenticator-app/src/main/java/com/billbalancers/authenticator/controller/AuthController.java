@@ -2,10 +2,7 @@ package com.billbalancers.authenticator.controller;
 
 
 import com.billbalancers.authenticatorapi.api.AuthApi;
-import com.billbalancers.authenticatorapi.model.Message;
-import com.billbalancers.authenticatorapi.model.MessageWithToken;
-import com.billbalancers.authenticatorapi.model.User;
-import com.billbalancers.authenticatorapi.model.UserLogin;
+import com.billbalancers.authenticatorapi.model.*;
 import com.billbalancers.service.AuthenticationService;
 import com.billbalancers.service.JWTGeneratorService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,7 +18,7 @@ import org.springframework.web.client.RestClientException;
 
 @RestController
 @ComponentScan(basePackages = "com.billbalancers")
-public class AuthController implements AuthApi {
+public class AuthController implements AuthApi{
 
 
     @Autowired
@@ -69,5 +66,16 @@ public class AuthController implements AuthApi {
             m.setMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(m);
         }
+    }
+
+    @Override
+    public ResponseEntity<ProfileData> getProfileDetails(String jwtToken) {
+        ProfileData profileData = new ProfileData();
+        String email = this.jwtGeneratorService.parseJwt(jwtToken);
+        profileData.setEmail(email);
+        profileData.setFirstName(this.authService.getUserData(email).getFirstName());
+        profileData.setLastName(this.authService.getUserData(email).getLastName());
+        return ResponseEntity.ok(profileData);
+
     }
 }
