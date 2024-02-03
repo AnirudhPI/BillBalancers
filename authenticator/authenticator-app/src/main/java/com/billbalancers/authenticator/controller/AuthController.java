@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
@@ -77,5 +76,12 @@ public class AuthController implements AuthApi{
         profileData.setLastName(this.authService.getUserData(email).getLastName());
         return ResponseEntity.ok(profileData);
 
+    }
+
+    @Override
+    public ResponseEntity<Message> updateUser(User user) {
+        Message m  = new Message();
+        m.setMessage(this.authService.updateUserData(user).getMessage());
+        return ResponseEntity.ok(m);
     }
 }

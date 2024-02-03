@@ -57,4 +57,16 @@ public class UserService {
         return this.userRepository.findUserDataByEmail(email);
     }
 
+    public void updateUserData(User user) {
+        UserData userToBeUpdated = this.userRepository.findUserDataByEmail(user.getEmail());
+        userToBeUpdated.setFirstName(user.getFirstName());
+        userToBeUpdated.setLastName(user.getLastName());
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+
+        userToBeUpdated.setPassword(encodedPassword);
+        this.userRepository.save(userToBeUpdated);
+    }
+
 }

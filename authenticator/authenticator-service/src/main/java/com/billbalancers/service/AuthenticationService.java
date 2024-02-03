@@ -33,5 +33,10 @@ public class AuthenticationService {
         return this.userService.getUserData(email);
     }
 
+    public Message updateUserData(User user){
+        this.userService.updateUserData(user);
+        return new Message("Update Successful");
+    }
+
 
 }
