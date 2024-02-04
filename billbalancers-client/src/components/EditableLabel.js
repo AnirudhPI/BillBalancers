@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, TextField, Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-const EditableLabel = ({profile}) =>{
+const EditableLabel = ({profile,onUpdate}) =>{
 
     const [editMode, setEditMode] = useState(false);
   
@@ -14,6 +14,7 @@ const EditableLabel = ({profile}) =>{
 
     const handleTextChange = (event) => {
         setLabelValue(event.target.value);
+        onUpdate(event.target.value);
     };
 
     const toggleEditMode = () => {

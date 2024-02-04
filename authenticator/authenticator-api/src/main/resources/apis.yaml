@@ -18,7 +18,7 @@ paths:
       parameters:
         - in: body
           name: user
-          description: "The user to create"
+          description: "The user to update"
           schema:
             $ref: "#/definitions/User"
       responses:

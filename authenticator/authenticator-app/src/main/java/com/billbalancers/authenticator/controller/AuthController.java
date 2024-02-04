@@ -75,7 +75,6 @@ public class AuthController implements AuthApi{
         profileData.setFirstName(this.authService.getUserData(email).getFirstName());
         profileData.setLastName(this.authService.getUserData(email).getLastName());
         return ResponseEntity.ok(profileData);
-
     }
 
     @Override

@@ -32,9 +32,21 @@ const Profile = () => {
         console.log(profileData);
     }
 
+    const handleProfileChange = (field,value) =>{
+        setProfileData(
+            {
+                ...profileData,
+                [field] : value
+            }
+        )
+    }
+
+
+
     const updateProfile = async () => {
+        console.log(profileData)
         const response = await axios.put('http://localhost:8080/auth/signup', profileData);
-        console.log(response);
+        //console.log(response);
     }
 
     useEffect(() => {
@@ -55,10 +67,10 @@ const Profile = () => {
             <Typography variant="h4" align="left" gutterBottom>
                 Profile
             </Typography>
-            <EditableLabel profile={profileData.firstName}/>
-            <EditableLabel profile={profileData.lastName}/>
-            <EditableLabel profile={profileData.email}/>
-            <EditableLabel profile={profileData.password}/>
+            <EditableLabel onUpdate = {(value) => handleProfileChange('firstName',value)} profile={profileData.firstName}/>
+            <EditableLabel onUpdate = {(value) => handleProfileChange('lastName',value)} profile={profileData.lastName}/>
+            <EditableLabel onUpdate = {(value) => handleProfileChange('email',value)} profile={profileData.email}/>
+            <EditableLabel onUpdate = {(value) => handleProfileChange('password',value)} profile={profileData.password}/>
             <Button
                 type="submit"
                 variant="contained"

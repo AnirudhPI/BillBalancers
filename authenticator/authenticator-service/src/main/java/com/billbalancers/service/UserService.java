@@ -4,13 +4,17 @@ import com.billbalancers.authenticatorapi.model.User;
 import com.billbalancers.authenticatorapi.model.UserLogin;
 import com.billbalancers.model.UserData;
 import com.billbalancers.model.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
+import java.util.Optional;
+
 @Service
+@Transactional
 public class UserService {
 
 
@@ -58,15 +62,16 @@ public class UserService {
     }
 
     public void updateUserData(User user) {
-        UserData userToBeUpdated = this.userRepository.findUserDataByEmail(user.getEmail());
+        UserData userToBeUpdated = this.userRepository.findByEmail(user.getEmail());
+
         userToBeUpdated.setFirstName(user.getFirstName());
         userToBeUpdated.setLastName(user.getLastName());
-
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-
         userToBeUpdated.setPassword(encodedPassword);
+        System.out.println(user.getFirstName());
         this.userRepository.save(userToBeUpdated);
+
     }
 
 }
