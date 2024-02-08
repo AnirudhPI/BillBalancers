@@ -18,7 +18,7 @@ paths:
       parameters:
         - in: body
           name: user
-          description: "The user to create"
+          description: "The user to update"
           schema:
             $ref: "#/definitions/User"
       responses:
@@ -38,6 +38,62 @@ paths:
       x-auth-type: "Application & Application User"
       x-throttling-tier: unlimited
 
+    put:
+      tags:
+        - User Update
+      summary: "API for User to Update profile"
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      operationId: updateUser
+      parameters:
+        - in: body
+          name: user
+          description: "The user to be updated"
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "201":
+          description: "student details"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "error detail in case of server error"
+          schema:
+            $ref: "#/definitions/Error"
+
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: unlimited
+
+
+  "/auth/getDetails":
+    get:
+      tags:
+        - Auth Detail
+      summary: "API to get details of user"
+      produces:
+        - application/json
+      operationId: getProfileDetails
+      parameters:
+        - in: header
+          name: jwtToken
+          description: "JWT Token"
+          type: string
+      responses:
+        "200":
+          description: "user details"
+          schema:
+            $ref: "#/definitions/User"
+        "401":
+          description: "unauthorized - incorrect credentials"
+          schema:
+            $ref: "#/definitions/Error"
+        "404":
+          description: "user not found"
+          schema:
+            $ref: "#/definitions/Error"
+
   "/auth/login":
     post:
       tags:
@@ -54,17 +110,47 @@ paths:
           description: "The user to create"
           schema:
             $ref: "#/definitions/UserLogin"
+        - in: header
+          name : jwtToken
+          description: "JWT Token"
+          type: string
       responses:
         "200":
           description: "student details"
           schema:
-            $ref: "#/definitions/Message"
+            $ref: "#/definitions/MessageWithToken"
         "401":
           description: "unauthorized - incorrect credentials"
           schema:
             $ref: "#/definitions/Error"
         "404":
           description: "user not found"
+          schema:
+            $ref: "#/definitions/Error"
+
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: unlimited
+  "/auth/logout":
+    get:
+      tags:
+        - Auth Detail
+      summary: "API for User to Logout"
+      produces:
+        - application/json
+      operationId: getAuthLogout
+      parameters:
+        - in: header
+          name: jwtToken
+          description: "JWT Token"
+          type: string
+          required: true
+      responses:
+        "200":
+          description: "Logout Successful"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Error"
           schema:
             $ref: "#/definitions/Error"
 
@@ -109,4 +195,24 @@ definitions:
       message:
         description: Message Sent
         type: string
+  MessageWithToken:
+    properties:
+      message:
+        description: Message Sent
+        type: string
+      token:
+        description: JWT Token
+        type: string
+  ProfileData:
+    properties:
+      email:
+        description: email of the user
+        type: string
+      firstName:
+        description: first name of user
+        type: string
+      lastName:
+        description: last name of user
+        type: string
+
 
