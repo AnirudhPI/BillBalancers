@@ -69,13 +69,14 @@ public class AuthController implements AuthApi{
     }
 
     @Override
-    public ResponseEntity<ProfileData> getProfileDetails(String jwtToken) {
-        ProfileData profileData = new ProfileData();
+    public ResponseEntity<User> getProfileDetails(String jwtToken) {
+        User user = new User();
         String email = this.jwtGeneratorService.parseJwt(jwtToken).get("email", String.class);
-        profileData.setEmail(email);
-        profileData.setFirstName(this.authService.getUserData(email).getFirstName());
-        profileData.setLastName(this.authService.getUserData(email).getLastName());
-        return ResponseEntity.ok(profileData);
+        user.setEmail(email);
+        user.setFirstName(this.authService.getUserData(email).getFirstName());
+        user.setLastName(this.authService.getUserData(email).getLastName());
+        user.setPassword(this.authService.getUserData(email).getPassword());
+        return ResponseEntity.ok(user);
     }
 
     @Override

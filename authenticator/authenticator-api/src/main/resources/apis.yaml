@@ -84,7 +84,7 @@ paths:
         "200":
           description: "user details"
           schema:
-            $ref: "#/definitions/ProfileData"
+            $ref: "#/definitions/User"
         "401":
           description: "unauthorized - incorrect credentials"
           schema:
