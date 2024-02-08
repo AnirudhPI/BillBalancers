@@ -37,6 +37,10 @@ public class AuthenticationService {
         this.userService.updateUserData(user);
         return new Message("Update Successful");
     }
+    public Message logoutUser(String jwtToken){
+        this.userService.logout(jwtToken);
+        return new Message("Logout Successful");
+    }
 
 
 }

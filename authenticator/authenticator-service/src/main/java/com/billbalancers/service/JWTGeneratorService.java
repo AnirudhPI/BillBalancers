@@ -38,13 +38,13 @@ public class JWTGeneratorService implements JWTGeneratorInterface {
     }
 
     @Override
-    public String parseJwt(String jwtString) {
+    public Claims parseJwt(String jwtString) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
             Jws<Claims> claimsJws = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwtString);
 
-            return claimsJws.getPayload().get("email", String.class);
+            return claimsJws.getPayload();
         }
         catch (ExpiredJwtException e){
             throw new ExpiredJwtException(null,e.getClaims(),"JWT Token Expired",e.getCause());

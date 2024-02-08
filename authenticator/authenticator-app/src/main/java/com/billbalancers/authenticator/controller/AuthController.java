@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 @RestController
 @ComponentScan(basePackages = "com.billbalancers")
@@ -70,7 +71,7 @@ public class AuthController implements AuthApi{
     @Override
     public ResponseEntity<ProfileData> getProfileDetails(String jwtToken) {
         ProfileData profileData = new ProfileData();
-        String email = this.jwtGeneratorService.parseJwt(jwtToken);
+        String email = this.jwtGeneratorService.parseJwt(jwtToken).get("email", String.class);
         profileData.setEmail(email);
         profileData.setFirstName(this.authService.getUserData(email).getFirstName());
         profileData.setLastName(this.authService.getUserData(email).getLastName());
@@ -83,4 +84,19 @@ public class AuthController implements AuthApi{
         m.setMessage(this.authService.updateUserData(user).getMessage());
         return ResponseEntity.ok(m);
     }
+
+    @Override
+    public ResponseEntity<Message> getAuthLogout(String jwtToken){
+        try {
+            Message m = new Message();
+            m.setMessage(this.authService.logoutUser(jwtToken).getMessage());
+            return ResponseEntity.ok(m);
+        }
+        catch(JedisConnectionException e){
+            Message m = new Message();
+            m.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(m);
+        }
+    }
+
 }

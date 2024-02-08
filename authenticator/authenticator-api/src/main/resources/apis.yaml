@@ -130,6 +130,32 @@ paths:
 
       x-auth-type: "Application & Application User"
       x-throttling-tier: unlimited
+  "/auth/logout":
+    get:
+      tags:
+        - Auth Detail
+      summary: "API for User to Logout"
+      produces:
+        - application/json
+      operationId: getAuthLogout
+      parameters:
+        - in: header
+          name: jwtToken
+          description: "JWT Token"
+          type: string
+          required: true
+      responses:
+        "200":
+          description: "Logout Successful"
+          schema:
+            $ref: "#/definitions/Message"
+        "500":
+          description: "Error"
+          schema:
+            $ref: "#/definitions/Error"
+
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: unlimited
 
 definitions:
   Error:
