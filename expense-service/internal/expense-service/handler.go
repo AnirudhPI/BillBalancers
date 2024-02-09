@@ -12,6 +12,5 @@ type Microservice struct {
 
 func (ms *Microservice) SayHello(ctx context.Context, req *proto.HelloRequest) (*proto.HelloResponse, error) {
 	name := req.GetName()
-	greeting := name
-	return &proto.HelloResponse{Greeting: greeting}, nil
+	return &proto.HelloResponse{Greeting: name}, nil
 }
