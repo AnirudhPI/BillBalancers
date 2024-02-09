@@ -14,11 +14,6 @@ func main() {
 	server := grpc.NewServer()
 	ms := &expenseservice.Microservice{}
 	proto.RegisterMicroserviceServer(server, ms)
-	// handler, err := ms.SayHello(context.TODO(), &proto.HelloRequest{Name: "Hello boi!!!"})
-	// fmt.Printf("Data = %s\n", handler.Greeting)
-	// if err != nil {
-	// 	log.Fatalf("Failed to listen: %v", err)
-	// }
 	address := ":50051"
 
 	lis, err := net.Listen("tcp", address)
