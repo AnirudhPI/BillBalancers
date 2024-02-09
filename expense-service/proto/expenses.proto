@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option go_package = "./proto";
 
-package expense;
+package proto;
 
 service Microservice {
   rpc SayHello (HelloRequest) returns (HelloResponse);

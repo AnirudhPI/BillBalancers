@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Microservice_SayHello_FullMethodName = "/expense.Microservice/SayHello"
+	Microservice_SayHello_FullMethodName = "/proto.Microservice/SayHello"
 )
 
 // MicroserviceClient is the client API for Microservice service.
@@ -96,7 +96,7 @@ func _Microservice_SayHello_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Microservice_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "expense.Microservice",
+	ServiceName: "proto.Microservice",
 	HandlerType: (*MicroserviceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
