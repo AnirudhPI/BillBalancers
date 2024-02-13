@@ -2,3 +2,4 @@
 .vscode/
 expense-service/expense-service
 expense-service/kreya
+expense-service/proto/*/*.go
