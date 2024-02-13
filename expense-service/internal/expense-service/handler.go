@@ -4,20 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AnirudhPI/BillBalancers/proto"
+	expenses "github.com/AnirudhPI/BillBalancers/proto/expenses"
+	groups "github.com/AnirudhPI/BillBalancers/proto/groups"
 )
 
-type Microservice struct {
-	proto.UnimplementedMicroserviceServer
+type ExpenseService struct {
+	groups.UnimplementedGroupServiceServer
+	expenses.UnimplementedMicroserviceServer
 }
 
-func (ms *Microservice) SayHello(ctx context.Context, req *proto.HelloRequest) (*proto.HelloResponse, error) {
-	name := req.GetName()
-	return &proto.HelloResponse{Greeting: name}, nil
-}
-
-func (ms *Microservice) CreateGroup(ctx context.Context, req *proto.GroupName) (*proto.Group, error) {
+func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName) (*groups.Group, error) {
 	name := req.GetGroupName()
 	fmt.Println(name)
-	return &proto.Group{groupName: name}, nil
+	return &groups.Group{GroupName: name}, nil
 }

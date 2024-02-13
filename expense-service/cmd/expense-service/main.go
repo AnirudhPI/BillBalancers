@@ -6,14 +6,14 @@ import (
 	"net"
 
 	expenseservice "github.com/AnirudhPI/BillBalancers/internal/expense-service"
-	"github.com/AnirudhPI/BillBalancers/proto"
+	groups "github.com/AnirudhPI/BillBalancers/proto/groups"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	server := grpc.NewServer()
-	ms := &expenseservice.Microservice{}
-	proto.RegisterMicroserviceServer(server, ms)
+	ms := &expenseservice.ExpenseService{}
+	groups.RegisterGroupServiceServer(server, ms)
 	address := ":50051"
 
 	lis, err := net.Listen("tcp", address)
