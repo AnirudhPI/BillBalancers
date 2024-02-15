@@ -25,6 +25,12 @@ type Group struct {
 	GroupName string
 }
 
+type UserGroup struct {
+	_id     string `gorm:"primaryKey"`
+	GroupID string
+	UserID  string
+}
+
 func loadEnv() {
 	path, err := os.Getwd()
 	if err != nil {
@@ -44,6 +50,7 @@ func (ms *ExpenseService) ConnectToDB() {
 	log.Println("Successfully connected to DB!")
 	ms.DB = db
 	ms.DB.AutoMigrate(&Group{})
+	ms.DB.AutoMigrate(&UserGroup{})
 }
 
 func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName) (*groups.Group, error) {
@@ -64,4 +71,24 @@ func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName
 	}
 
 	return &groups.Group{GroupId: groupID, GroupName: groupName}, nil
+}
+
+func (ms *ExpenseService) AddUsersToGroup(ctx context.Context, req *groups.GroupData) (*groups.Group, error) {
+
+	groupID := req.GetGroupID()
+	uuidList := req.GetUuid()
+	for _, value := range uuidList {
+		_id := uuid.New().String()
+		userGroupMapping := UserGroup{
+			_id:     _id,
+			GroupID: groupID,
+			UserID:  value,
+		}
+		result := ms.DB.WithContext(ctx).Create(&userGroupMapping)
+		if result.Error != nil {
+			log.Printf("Failed to insert new group into database: %v", result.Error)
+			return nil, fmt.Errorf("failed to create new group: %v", result.Error)
+		}
+	}
+	return &groups.Group{GroupId: groupID}, nil
 }

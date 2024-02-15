@@ -15,7 +15,7 @@ message GroupName {
 }
 
 message GroupData {
-  	string groupName= 1;
+  	string groupID = 1;
 	repeated string uuid = 2;
 }
 
