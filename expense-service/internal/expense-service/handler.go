@@ -2,7 +2,6 @@ package expenseservice
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -10,12 +9,20 @@ import (
 
 	expenses "github.com/AnirudhPI/BillBalancers/proto/expenses"
 	groups "github.com/AnirudhPI/BillBalancers/proto/groups"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type ExpenseService struct {
 	groups.UnimplementedGroupServiceServer
 	expenses.UnimplementedMicroserviceServer
+	DB *gorm.DB
+}
+type Group struct {
+	GroupId   string `gorm:"primaryKey"`
+	GroupName string
 }
 
 func loadEnv() {
@@ -26,22 +33,35 @@ func loadEnv() {
 	godotenv.Load(filepath.Join(path, ".env"))
 }
 
-func connectToDB() {
+func (ms *ExpenseService) ConnectToDB() {
 	loadEnv()
-	db, err := sql.Open("mysql", os.Getenv("DSN"))
+	dsn := os.Getenv("DSN")
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect: %v", err)
 	}
-	defer db.Close()
-	if err := db.Ping(); err != nil {
-		log.Fatalf("failed to ping: %v", err)
-	}
 
 	log.Println("Successfully connected to DB!")
+	ms.DB = db
+	ms.DB.AutoMigrate(&Group{})
 }
 
 func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName) (*groups.Group, error) {
-	name := req.GetGroupName()
-	fmt.Println(name)
-	return &groups.Group{GroupName: name}, nil
+	groupName := req.GetGroupName()
+	fmt.Println(groupName)
+
+	groupID := uuid.New().String()
+
+	group := Group{
+		GroupId:   groupID,
+		GroupName: groupName,
+	}
+
+	result := ms.DB.WithContext(ctx).Create(&group)
+	if result.Error != nil {
+		log.Printf("Failed to insert new group into database: %v", result.Error)
+		return nil, fmt.Errorf("failed to create new group: %v", result.Error)
+	}
+
+	return &groups.Group{GroupId: groupID, GroupName: groupName}, nil
 }

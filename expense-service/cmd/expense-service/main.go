@@ -15,6 +15,7 @@ func main() {
 
 	server := grpc.NewServer()
 	ms := &expenseservice.ExpenseService{}
+	ms.ConnectToDB()
 	groups.RegisterGroupServiceServer(server, ms)
 	address := ":50051"
 	lis, err := net.Listen("tcp", address)

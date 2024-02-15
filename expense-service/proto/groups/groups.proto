@@ -11,6 +11,7 @@ service GroupService {
 
 message GroupName {
   	string GroupName = 1;
+	string Jwt = 2;
 }
 
 message GroupData {
@@ -19,5 +20,7 @@ message GroupData {
 }
 
 message Group {
-	string groupName= 1;
+	string GroupId= 1;
+	string GroupName= 2;
+	string CreatedBy=3;
 }
