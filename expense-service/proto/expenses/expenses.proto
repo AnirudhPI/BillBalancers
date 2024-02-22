@@ -2,16 +2,16 @@ syntax = "proto3";
 
 option go_package = "./proto";
 
+import "google/protobuf/empty.proto";
 package proto;
 
-service Microservice {
-  rpc SayHello (HelloRequest) returns (HelloResponse);
+service Expenseservice {
+  rpc addExpense (Expense) returns (google.protobuf.Empty);
 }
 
-message HelloRequest {
-  string name = 1;
-}
-
-message HelloResponse {
-  string greeting = 1;
+message Expense {
+  string userID = 1;
+  string groupID = 2;
+  string description = 3;
+  float totalExpense = 4;
 }

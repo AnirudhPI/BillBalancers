@@ -18,7 +18,7 @@ import (
 
 type ExpenseService struct {
 	groups.UnimplementedGroupServiceServer
-	expenses.UnimplementedMicroserviceServer
+	expenses.UnimplementedExpenseserviceServer
 	DB *gorm.DB
 }
 type Group struct {
@@ -30,6 +30,22 @@ type UserGroup struct {
 	_id     string `gorm:"primaryKey"`
 	GroupID string
 	UserID  string
+}
+
+type User struct {
+	_id        string `gorm:"primaryKey"`
+	first_name string
+	last_name  string
+	email      string
+}
+
+type Expense struct {
+	_id          string `gorm:"primaryKey"`
+	group_id     string
+	user_id      string
+	email        string
+	description  string
+	totalExpense float32
 }
 
 func loadEnv() {
@@ -52,6 +68,7 @@ func (ms *ExpenseService) ConnectToDB() {
 	ms.DB = db
 	ms.DB.AutoMigrate(&Group{})
 	ms.DB.AutoMigrate(&UserGroup{})
+	ms.DB.AutoMigrate(&Expense{})
 }
 
 func parseJWTToken(jwtToken string) (string, error) {
@@ -125,4 +142,39 @@ func (ms *ExpenseService) AddUsersToGroup(ctx context.Context, req *groups.Group
 		}
 	}
 	return &groups.Group{GroupId: groupID}, nil
+}
+
+func (ms *ExpenseService) GetGroupMembers(ctx context.Context, req *groups.GroupDetails) (*groups.GroupMembers, error) {
+	groupID := req.GetGroupID()
+	var userGroups []UserGroup
+	result := ms.DB.WithContext(ctx).Where("group_id = ?", groupID).Find(&userGroups)
+	if result.Error != nil {
+		return nil, fmt.Errorf("error fetching group members: %v", result.Error)
+	}
+	userIDs := make([]string, 0, len(userGroups))
+	for _, ug := range userGroups {
+		userIDs = append(userIDs, ug.UserID)
+	}
+	fmt.Println(userIDs)
+	return &groups.GroupMembers{FirstName: "HI", LastName: "hey", Email: "something"}, nil
+}
+
+func (ms *ExpenseService) AddExpense(ctx context.Context, req *expenses.Expense) error {
+
+	expenseID := uuid.New().String()
+	expense := Expense{
+		_id:          expenseID,
+		group_id:     req.GetGroupID(),
+		user_id:      req.GetUserID(),
+		description:  req.GetDescription(),
+		totalExpense: req.GetTotalExpense(),
+	}
+
+	result := ms.DB.WithContext(ctx).Create(&expense)
+	if result.Error != nil {
+		log.Printf("Failed to insert new group into database: %v", result.Error)
+		return fmt.Errorf("failed to create new group: %v", result.Error)
+	}
+	return nil
+
 }
