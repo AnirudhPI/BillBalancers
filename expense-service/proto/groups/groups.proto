@@ -12,6 +12,7 @@ service GroupService {
 message GroupName {
   	string GroupName = 1;
 	string Jwt = 2;
+	string UserID = 3;
 }
 
 message GroupData {

@@ -15,10 +15,10 @@ const LoginForm = () => {
         e.preventDefault();
         console.log('Form submitted with data:', formData);
         const response = await axios.post('http://localhost:8080/auth/login', formData);
-        console.log('data: ', response);
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userID',response.data.userID);
         if (response.status === 200) {
-			navigate("/profile");
+			      navigate("/profile");
         }
         setFormData({
           email: '',

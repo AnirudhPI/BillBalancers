@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
+import javax.validation.constraints.Null;
 import java.rmi.ConnectException;
 import java.time.Instant;
 import java.util.Optional;
@@ -47,18 +48,19 @@ public class UserService {
         this.userRepository.save(userData);
     }
 
-    public void loginValidation(UserLogin userLogin) {
+    public Long loginValidation(UserLogin userLogin) {
 
         String email = userLogin.getEmail();
         String password = userLogin.getPassword();
-        boolean userExists = userRepository.existsUserByEmail(userLogin.getEmail());
-        if(!userExists){
+        UserData user_data = userRepository.findUserDataByEmail(email);
+        if(user_data == null){
             throw new DataIntegrityViolationException("No user found");
         }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if(!bCryptPasswordEncoder.matches(password,userRepository.findPasswordByEmail(email).getPassword())) {
+        if(!bCryptPasswordEncoder.matches(password,user_data.getPassword())) {
             throw new RestClientException("Wrong Password");
         }
+        return user_data.getId();
 
     }
     public UserData getUserData(String email){
@@ -74,7 +76,6 @@ public class UserService {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         userToBeUpdated.setPassword(encodedPassword);
-        System.out.println(user.getFirstName());
         this.userRepository.save(userToBeUpdated);
 
     }

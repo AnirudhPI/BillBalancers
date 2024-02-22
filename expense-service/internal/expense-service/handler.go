@@ -9,6 +9,7 @@ import (
 
 	expenses "github.com/AnirudhPI/BillBalancers/proto/expenses"
 	groups "github.com/AnirudhPI/BillBalancers/proto/groups"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -53,9 +54,30 @@ func (ms *ExpenseService) ConnectToDB() {
 	ms.DB.AutoMigrate(&UserGroup{})
 }
 
+func parseJWTToken(jwtToken string) (string, error) {
+	token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected Signing Method: %v", token.Header)
+		}
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if err != nil {
+		return "", fmt.Errorf("error parsing JWT token: %v", err)
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		email, ok := claims["email"].(string)
+		if !ok {
+			return "", fmt.Errorf("email claim not found in JWT token")
+		}
+		return email, nil
+	}
+
+	return "", fmt.Errorf("invalid JWT token")
+}
 func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName) (*groups.Group, error) {
 	groupName := req.GetGroupName()
-	fmt.Println(groupName)
 
 	groupID := uuid.New().String()
 
@@ -70,6 +92,18 @@ func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName
 		return nil, fmt.Errorf("failed to create new group: %v", result.Error)
 	}
 
+	userID := req.GetUserID()
+	_id := uuid.New().String()
+	userGroup := UserGroup{
+		_id:     _id,
+		GroupID: groupID,
+		UserID:  userID,
+	}
+	result = ms.DB.WithContext(ctx).Create(&userGroup)
+	if result.Error != nil {
+		log.Printf("Failed to insert new group into database: %v", result.Error)
+		return nil, fmt.Errorf("failed to create new group: %v", result.Error)
+	}
 	return &groups.Group{GroupId: groupID, GroupName: groupName}, nil
 }
 
