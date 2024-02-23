@@ -7,6 +7,14 @@ package proto;
 
 service ExpenseService {
   rpc addExpense (Expense) returns (google.protobuf.Empty);
+  rpc updateExpense (ExpenseChange) returns (google.protobuf.Empty);
+  rpc deleteExpense (ExpenseID) returns (google.protobuf.Empty);
+  rpc fetchExpense (ExpenseID) returns (UserExpense);
+}
+
+message UserExpense {
+  string description = 3;
+  float totalExpense = 4;
 }
 
 message Expense {
@@ -14,4 +22,14 @@ message Expense {
   string groupID = 2;
   string description = 3;
   float totalExpense = 4;
+}
+
+message ExpenseChange {
+  string ExpenseID = 1;
+  string description = 2;
+  float totalExpense = 3;
+}
+
+message ExpenseID {
+  string ExpenseID = 1;
 }

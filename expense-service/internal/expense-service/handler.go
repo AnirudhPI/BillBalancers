@@ -12,6 +12,8 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -41,9 +43,15 @@ type User struct {
 }
 
 type Expense struct {
-	_id          string `gorm:"primaryKey"`
+	ExpenseID    string `gorm:"primaryKey"`
 	GroupID      string
 	UserID       string
+	Description  string
+	TotalExpense float32
+}
+
+type ExpenseChange struct {
+	ExpenseID    string `gorm:"primaryKey"`
 	Description  string
 	TotalExpense float32
 }
@@ -163,7 +171,7 @@ func (ms *ExpenseService) AddExpense(ctx context.Context, req *expenses.Expense)
 
 	expenseID := uuid.New().String()
 	expense := Expense{
-		_id:          expenseID,
+		ExpenseID:    expenseID,
 		GroupID:      req.GetGroupID(),
 		UserID:       req.GetUserID(),
 		Description:  req.GetDescription(),
@@ -177,4 +185,63 @@ func (ms *ExpenseService) AddExpense(ctx context.Context, req *expenses.Expense)
 	}
 	return &emptypb.Empty{}, nil
 
+}
+
+func (ms *ExpenseService) FetchExpense(ctx context.Context, req *expenses.ExpenseID) (*expenses.UserExpense, error) {
+	expenseID := req.GetExpenseID()
+
+	var expense Expense
+	result := ms.DB.WithContext(ctx).Where("expense_id = ?", expenseID).First(&expense)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, status.Errorf(codes.NotFound, "expense with ID %s not found", expenseID)
+		}
+		return nil, status.Errorf(codes.Internal, "failed to fetch expense: %v", result.Error)
+	}
+
+	userExpense := &expenses.UserExpense{
+		Description:  expense.Description,
+		TotalExpense: float32(expense.TotalExpense),
+	}
+
+	return userExpense, nil
+}
+
+func (ms *ExpenseService) UpdateExpense(ctx context.Context, req *expenses.ExpenseChange) (*emptypb.Empty, error) {
+	expenseID := req.GetExpenseID()
+
+	expenseChange := ExpenseChange{
+		ExpenseID:    expenseID,
+		Description:  req.GetDescription(),
+		TotalExpense: req.GetTotalExpense(),
+	}
+
+	result := ms.DB.WithContext(ctx).Model(&Expense{}).Where("expense_id = ?", expenseID).Updates(expenseChange)
+	if result.Error != nil {
+		log.Printf("Failed to update expense with ID %s: %v", expenseID, result.Error)
+		return nil, status.Errorf(codes.Internal, "failed to update expense: %v", result.Error)
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "expense with ID %s not found", expenseID)
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (ms *ExpenseService) DeleteExpense(ctx context.Context, req *expenses.ExpenseID) (*emptypb.Empty, error) {
+	expenseID := req.GetExpenseID()
+
+	result := ms.DB.WithContext(ctx).Where("expense_id = ?", expenseID).Delete(&Expense{})
+
+	if result.Error != nil {
+		log.Printf("Failed to delete expense with ID %s: %v", expenseID, result.Error)
+		return nil, status.Errorf(codes.Internal, "failed to delete expense: %v", result.Error)
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "expense with ID %s not found", expenseID)
+	}
+
+	return &emptypb.Empty{}, nil
 }
