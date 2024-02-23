@@ -49,11 +49,12 @@ public class AuthController implements AuthApi{
     public ResponseEntity<MessageWithToken> getAuthLogin(UserLogin userLogin, @RequestHeader(required = false) String jwtToken) {
         try {
             MessageWithToken message = new MessageWithToken();
-            if(jwtToken != null){
-                this.jwtGeneratorService.parseJwt(jwtToken);
-            }
+//            if(jwtToken != null){
+//                this.jwtGeneratorService.parseJwt(jwtToken);
+//            }
             message.setMessage(this.authService.login(userLogin).getMessage());
             message.setToken(this.jwtGeneratorService.generateToken(userLogin));
+            message.setUserID(this.authService.login(userLogin).getID());
             return ResponseEntity.ok(message);
         }
         catch(DataIntegrityViolationException e){

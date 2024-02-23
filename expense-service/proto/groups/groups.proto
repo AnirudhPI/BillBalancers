@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+package proto;
+
+service GroupService {
+  	rpc CreateGroup (GroupName) returns (Group);
+  	rpc AddUsersToGroup (GroupData) returns (Group);
+	rpc GetGroupMembers (GroupDetails) returns (GroupMembers);
+}
+
+message GroupName {
+  	string GroupName = 1;
+	string Jwt = 2;
+	string UserID = 3;
+}
+
+message GroupData {
+  	string groupID = 1;
+	repeated string uuid = 2;
+}
+
+message Group {
+	string GroupId= 1;
+	string GroupName= 2;
+	string CreatedBy=3;
+}
+
+message GroupDetails {
+	string UserID = 1;
+	string GroupID = 2;
+}
+
+message GroupMembers {
+	string FirstName = 1;
+	string LastName = 2;
+	string Email = 3;
+}

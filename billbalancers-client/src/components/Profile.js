@@ -5,6 +5,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import axios from 'axios';
+import PasswordField from './PasswordLabel';
 
 const Profile = () => {
 
@@ -15,7 +16,8 @@ const Profile = () => {
         firstName: '',
         lastName: '',
         email: '',
-        password: ''
+        password: '',
+        updatedPassword : ''
     });
     const jwtToken = localStorage.getItem('token');
 
@@ -54,7 +56,6 @@ const Profile = () => {
     }
 
     const updateProfile = async () => {
-        console.log(profileData)
         try {
             const response = await axios.put('http://localhost:8080/auth/signup', profileData);
         }
@@ -90,12 +91,7 @@ const Profile = () => {
             <EditableLabel onUpdate = {(value) => handleProfileChange('firstName',value)} profile={profileData.firstName}/>
             <EditableLabel onUpdate = {(value) => handleProfileChange('lastName',value)} profile={profileData.lastName}/>
             <EditableLabel onUpdate = {(value) => handleProfileChange('email',value)} profile={profileData.email}/>
-            <EditableLabel onUpdate = {(value) => handleProfileChange('password',value)} profile={profileData.password}/>
-            <OutlinedInput
-                id="outlined-adornment-password"
-                type='password'
-                label="Password"
-            />
+            <PasswordField profile={profileData.password} onUpdate = {(field,value) => handleProfileChange(field,value)}/>
             <Button
                 type="submit"
                 variant="contained"

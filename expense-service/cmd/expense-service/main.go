@@ -6,16 +6,20 @@ import (
 	"net"
 
 	expenseservice "github.com/AnirudhPI/BillBalancers/internal/expense-service"
-	"github.com/AnirudhPI/BillBalancers/proto"
+	expense "github.com/AnirudhPI/BillBalancers/proto/expenses"
+	groups "github.com/AnirudhPI/BillBalancers/proto/groups"
+	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	server := grpc.NewServer()
-	ms := &expenseservice.Microservice{}
-	proto.RegisterMicroserviceServer(server, ms)
-	address := ":50051"
 
+	server := grpc.NewServer()
+	ms := &expenseservice.ExpenseService{}
+	ms.ConnectToDB()
+	groups.RegisterGroupServiceServer(server, ms)
+	expense.RegisterExpenseServiceServer(server, ms)
+	address := ":50051"
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -26,4 +30,5 @@ func main() {
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
+
 }

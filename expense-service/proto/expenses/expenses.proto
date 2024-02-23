@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+import "google/protobuf/empty.proto";
+package proto;
+
+service ExpenseService {
+  rpc addExpense (Expense) returns (google.protobuf.Empty);
+}
+
+message Expense {
+  string userID = 1;
+  string groupID = 2;
+  string description = 3;
+  float totalExpense = 4;
+}

@@ -1,1 +1,2 @@
-protoc expenses.proto --go_out=paths=source_relative:./proto --go-grpc_out=paths=source_relative:./proto --proto_path=./proto
+protoc expenses.proto --go_out=paths=source_relative:./proto/expenses --go-grpc_out=paths=source_relative:./proto/expenses --proto_path=./proto/expenses
+protoc groups.proto --go_out=paths=source_relative:./proto/groups --go-grpc_out=paths=source_relative:./proto/groups --proto_path=./proto/groups

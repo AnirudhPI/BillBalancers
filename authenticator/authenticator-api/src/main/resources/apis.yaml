@@ -203,6 +203,10 @@ definitions:
       token:
         description: JWT Token
         type: string
+      userID:
+        description: User ID
+        type: integer
+        format: int64
   ProfileData:
     properties:
       email:

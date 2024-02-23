@@ -25,8 +25,8 @@ public class AuthenticationService {
 
     public Message login(UserLogin userLogin) {
 
-        this.userService.loginValidation(userLogin);
-        return new Message("Login Successful");
+        Long ID = this.userService.loginValidation(userLogin);
+        return new Message("Login Successful",ID);
     }
 
     public UserData getUserData(String email){

@@ -7,7 +7,7 @@ const EditableLabel = ({profile,onUpdate}) =>{
     const [editMode, setEditMode] = useState(false);
   
     const [labelValue, setLabelValue] = useState('');
-
+    
     useEffect(()=>{
         setLabelValue(profile);
     },[profile])
@@ -28,26 +28,26 @@ const EditableLabel = ({profile,onUpdate}) =>{
     return(
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px',marginBottom: '16px' }}>
                 {editMode ? (
+                    <>
                     <TextField
                     value={labelValue}
+                    type="password"
                     onChange={handleTextChange}
                     onBlur={toggleEditMode}
                     autoFocus
                     />
-                ) : (
-                    <span>{labelValue}</span>
-                )}
-                {
-                    !editMode ? (
-                <IconButton onClick={toggleEditMode} aria-label="edit">
-                    <EditIcon />
-                </IconButton>
-                    ):(
-                <Button onClick={onClick} variant="outlined">
+                    <Button onClick={onClick} variant="outlined">
                     Done
                 </Button>
-                    )
-                }
+                </>
+                ) : (
+                    <>
+                        <span>{labelValue}</span>
+                    <IconButton onClick={toggleEditMode} aria-label="edit">
+                        <EditIcon />
+                    </IconButton>
+                </>
+                )}
             </div>
     )
 }
