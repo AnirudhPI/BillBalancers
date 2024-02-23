@@ -12,13 +12,14 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 type ExpenseService struct {
 	groups.UnimplementedGroupServiceServer
-	expenses.UnimplementedExpenseserviceServer
+	expenses.UnimplementedExpenseServiceServer
 	DB *gorm.DB
 }
 type Group struct {
@@ -33,19 +34,18 @@ type UserGroup struct {
 }
 
 type User struct {
-	_id        string `gorm:"primaryKey"`
-	first_name string
-	last_name  string
-	email      string
+	_id       string `gorm:"primaryKey"`
+	FirstName string
+	LastName  string
+	Email     string
 }
 
 type Expense struct {
 	_id          string `gorm:"primaryKey"`
-	group_id     string
-	user_id      string
-	email        string
-	description  string
-	totalExpense float32
+	GroupID      string
+	UserID       string
+	Description  string
+	TotalExpense float32
 }
 
 func loadEnv() {
@@ -159,22 +159,22 @@ func (ms *ExpenseService) GetGroupMembers(ctx context.Context, req *groups.Group
 	return &groups.GroupMembers{FirstName: "HI", LastName: "hey", Email: "something"}, nil
 }
 
-func (ms *ExpenseService) AddExpense(ctx context.Context, req *expenses.Expense) error {
+func (ms *ExpenseService) AddExpense(ctx context.Context, req *expenses.Expense) (*emptypb.Empty, error) {
 
 	expenseID := uuid.New().String()
 	expense := Expense{
 		_id:          expenseID,
-		group_id:     req.GetGroupID(),
-		user_id:      req.GetUserID(),
-		description:  req.GetDescription(),
-		totalExpense: req.GetTotalExpense(),
+		GroupID:      req.GetGroupID(),
+		UserID:       req.GetUserID(),
+		Description:  req.GetDescription(),
+		TotalExpense: req.GetTotalExpense(),
 	}
 
 	result := ms.DB.WithContext(ctx).Create(&expense)
 	if result.Error != nil {
-		log.Printf("Failed to insert new group into database: %v", result.Error)
-		return fmt.Errorf("failed to create new group: %v", result.Error)
+		log.Printf("Failed to insert new expense into database: %v", result.Error)
+		return nil, fmt.Errorf("failed to create new expense: %v", result.Error)
 	}
-	return nil
+	return &emptypb.Empty{}, nil
 
 }

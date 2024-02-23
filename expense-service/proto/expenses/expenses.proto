@@ -5,7 +5,7 @@ option go_package = "./proto";
 import "google/protobuf/empty.proto";
 package proto;
 
-service Expenseservice {
+service ExpenseService {
   rpc addExpense (Expense) returns (google.protobuf.Empty);
 }
 
