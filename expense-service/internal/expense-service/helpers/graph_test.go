@@ -62,7 +62,7 @@ type GroupGraph struct {
 
 type Member struct {
 	UserID string
-	Edges  map[string]*Edge
+	Edges  []Edge
 }
 
 type Edge struct {
@@ -76,31 +76,31 @@ type Connection struct {
 	Value float64
 }
 
-func (this *GroupGraph) AddMember(UserID string) {
-	this.GroupMembers[UserID] = &Member{UserID: UserID, Edges: map[string]*Edge{}}
+func (graph *GroupGraph) AddMember(UserID string) {
+	graph.GroupMembers[UserID] = &Member{UserID: UserID, Edges: make([]Edge, 0)}
 }
 
-func (this *GroupGraph) AddEdge(sourceMember, destMember string, amount float64) {
-	if _, ok := this.GroupMembers[sourceMember]; !ok {
+func (graph *GroupGraph) AddEdge(sourceMember, destMember string, amount float64) {
+	if _, ok := graph.GroupMembers[sourceMember]; !ok {
 		return
 	}
-	if _, ok := this.GroupMembers[destMember]; !ok {
+	if _, ok := graph.GroupMembers[destMember]; !ok {
 		return
 	}
-
-	this.GroupMembers[sourceMember].Edges[destMember] = &Edge{EdgeID: uuid.New().String(),
+	edge := Edge{EdgeID: uuid.New().String(),
 		Amount: amount,
-		Member: this.GroupMembers[destMember]}
+		Member: graph.GroupMembers[destMember]}
+	graph.GroupMembers[sourceMember].Edges = append(graph.GroupMembers[sourceMember].Edges, edge)
 }
 
-func (this *GroupGraph) UserLentTotalAmount(sourceMember string) float64 {
+func (graph *GroupGraph) UserLentTotalAmount(sourceMember string) float64 {
 	result := float64(0)
 
-	if _, ok := this.GroupMembers[sourceMember]; !ok {
+	if _, ok := graph.GroupMembers[sourceMember]; !ok {
 		return result
 	}
 
-	for _, edge := range this.GroupMembers[sourceMember].Edges {
+	for _, edge := range graph.GroupMembers[sourceMember].Edges {
 		result += edge.Amount
 	}
 
