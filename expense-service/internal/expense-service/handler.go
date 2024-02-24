@@ -24,36 +24,48 @@ type ExpenseService struct {
 	expenses.UnimplementedExpenseServiceServer
 	DB *gorm.DB
 }
-type Group struct {
-	GroupId   string `gorm:"primaryKey"`
-	GroupName string
-}
-
-type UserGroup struct {
-	_id     string `gorm:"primaryKey"`
-	GroupID string
-	UserID  string
-}
-
 type User struct {
-	_id       string `gorm:"primaryKey"`
+	ID        string `gorm:"primaryKey"`
 	FirstName string
 	LastName  string
 	Email     string
 }
 
+type Group struct {
+	GroupID         string `gorm:"primaryKey"`
+	GroupName       string
+	CreatedByUserID string `gorm:"type:TEXT;size:255"`
+	CreatedByUser   User   `gorm:"foreignKey:CreatedByUserID;references:ID"`
+}
+
+type UserGroup struct {
+	GroupID string `gorm:"primaryKey"`
+	UserID  string `gorm:"primaryKey"`
+}
+
 type Expense struct {
 	ExpenseID    string `gorm:"primaryKey"`
-	GroupID      string
-	UserID       string
+	GroupID      string `gorm:"type:TEXT;size:255"`
+	UserID       string `gorm:"type:TEXT;size:255"`
 	Description  string
 	TotalExpense float32
+	Group        Group `gorm:"foreignKey:GroupID"`
+	User         User  `gorm:"foreignKey:UserID"`
 }
 
 type ExpenseChange struct {
 	ExpenseID    string `gorm:"primaryKey"`
 	Description  string
 	TotalExpense float32
+	Expense      Expense `gorm:"foreignKey:ExpenseID"`
+}
+
+type UserExpense struct {
+	UserID    string `gorm:"primaryKey"`
+	ExpenseID string `gorm:"primaryKey"`
+	Share     float32
+	User      User    `gorm:"foreignKey:UserID"`
+	Expense   Expense `gorm:"foreignKey:ExpenseID"`
 }
 
 func loadEnv() {
@@ -74,9 +86,11 @@ func (ms *ExpenseService) ConnectToDB() {
 
 	log.Println("Successfully connected to DB!")
 	ms.DB = db
+	ms.DB.AutoMigrate(&User{})
 	ms.DB.AutoMigrate(&Group{})
 	ms.DB.AutoMigrate(&UserGroup{})
 	ms.DB.AutoMigrate(&Expense{})
+	ms.DB.AutoMigrate(&UserExpense{})
 }
 
 func parseJWTToken(jwtToken string) (string, error) {
@@ -105,10 +119,11 @@ func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName
 	groupName := req.GetGroupName()
 
 	groupID := uuid.New().String()
-
+	userID := req.GetUserID()
 	group := Group{
-		GroupId:   groupID,
-		GroupName: groupName,
+		GroupID:         groupID,
+		GroupName:       groupName,
+		CreatedByUserID: userID,
 	}
 
 	result := ms.DB.WithContext(ctx).Create(&group)
@@ -117,10 +132,7 @@ func (ms *ExpenseService) CreateGroup(ctx context.Context, req *groups.GroupName
 		return nil, fmt.Errorf("failed to create new group: %v", result.Error)
 	}
 
-	userID := req.GetUserID()
-	_id := uuid.New().String()
 	userGroup := UserGroup{
-		_id:     _id,
 		GroupID: groupID,
 		UserID:  userID,
 	}
@@ -137,9 +149,7 @@ func (ms *ExpenseService) AddUsersToGroup(ctx context.Context, req *groups.Group
 	groupID := req.GetGroupID()
 	uuidList := req.GetUuid()
 	for _, value := range uuidList {
-		_id := uuid.New().String()
 		userGroupMapping := UserGroup{
-			_id:     _id,
 			GroupID: groupID,
 			UserID:  value,
 		}
